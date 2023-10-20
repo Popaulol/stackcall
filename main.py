@@ -299,11 +299,11 @@ class Word(Command):
             case "getchar":
                 interpreter.push(Fraction(ord(input())))
             case "putchar":
-                print(chr(int(interpreter.pop())))
+                print(chr(int(interpreter.pop())), end="")
             case "in":
                 interpreter.push(Fraction(input()))
             case "out":
-                print(float(interpreter.pop()))
+                print(float(interpreter.pop()), end="")
             case "change":
                 interpreter.change_stack(int(interpreter.pop()))
             case "debug":
