@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from enum import IntEnum
 from fractions import Fraction
 from numbers import Rational
-from typing import NoReturn
+from typing import NoReturn, Dict
 
 type stack_value = Fraction
 
@@ -61,8 +61,8 @@ class Parser:
 
         return c
 
-    def get_token(self):
-        token: str | list[str] = []
+    def get_token(self) -> Token:
+        token: list[str] = []
         line = self.line
         column = self.column
         while True:
@@ -75,10 +75,10 @@ class Parser:
                 break
             token.append(c)
 
-        token = "".join(token)
-        return Token(token, line, column)
+        token_str: str = "".join(token)
+        return Token(token_str, line, column)
 
-    def parse(self):
+    def parse(self) -> dict[int, Function]:
         self.line = 1
         self.column = 1
         self.idx = 0
@@ -115,7 +115,8 @@ class Parser:
                     index_token.column,
                 )
 
-            commands = []
+            commands: list[Command] = []
+            command_tok: Token
             while (command_tok := self.get_token()).tok != "end":
                 if command_tok.tok == "":
                     self.interpreter.error(
@@ -143,26 +144,26 @@ class Interpreter:
     debug_mode: DebugMode
 
     def __init__(
-        self,
-        file: str,
-        debug_mode: DebugMode = DebugMode.NO_DEBUG,
+            self,
+            file: str,
+            debug_mode: DebugMode = DebugMode.NO_DEBUG,
     ):
         self.file = file
         self.current_stack = []
-        self.stacks = {0: self.current_stack}
+        self.stacks = {Fraction(0): self.current_stack}
         self.functions = {}
         self.call_stack = []
         self.debug_mode = debug_mode
 
         self.parse()
 
-    def parse(self):
+    def parse(self) -> None:
         self.functions = Parser(self.file, self).parse()
 
-    def run(self):
+    def run(self) -> None:
         self.call(0, 0, 0)
 
-    def call(self, i: int, line: int, column: int):
+    def call(self, i: int, line: int, column: int) -> None:
         if self.debug_mode >= DebugMode.CALL_STEP:
             input(f"Function {i} was called from {self.file}:{line}:{column}")
 
@@ -183,7 +184,7 @@ class Interpreter:
         breakpoint()
         exit()
 
-    def push(self, value: stack_value):
+    def push(self, value: stack_value) -> None:
         self.current_stack.append(value)
 
     def pop(self) -> stack_value:
@@ -192,17 +193,20 @@ class Interpreter:
     def render(self) -> str:
         return "\n".join(f"{i}: {f.render()}" for i, f in self.functions.items())
 
-    def clear(self):
+    def clear(self) -> None:
         self.current_stack.clear()
 
-    def change_stack(self, i: stack_value):
+    def change_stack(self, i: stack_value) -> None:
         self.current_stack = self.stacks.get(i, list())
         self.stacks[i] = self.current_stack
 
-    def set_debug(self, mode: int):
+    def set_debug(self, mode: int) -> None:
         self.debug_mode = DebugMode(mode)
 
-    def dump(self):
+    def dump(self) -> None:
+        def first_element(value: tuple[stack_value, list[stack_value]]) -> stack_value:
+            return value[0]
+
         print()
         max_stack_size = max(len(stack) for _, stack in self.stacks.items())
         for row in range(max_stack_size, 0, -1):
@@ -211,7 +215,7 @@ class Interpreter:
                     f"{(" " if len(stack) - 1 < row else str(stack[row])).center(10)}"
                     for _, stack in sorted(
                         self.stacks.items(),
-                        key=lambda i: i[0],
+                        key=first_element,
                     )
                 )
             )
@@ -229,7 +233,7 @@ class Function:
     def __init__(self, commands: list[Command]):
         self.commands = commands
 
-    def run(self, interpreter: Interpreter):
+    def run(self, interpreter: Interpreter) -> None:
         for command in self.commands:
             command.run(interpreter)
 
@@ -246,7 +250,7 @@ class Command(ABC):
         self.column = column
 
     @abstractmethod
-    def run(self, interpreter: Interpreter):
+    def run(self, interpreter: Interpreter) -> None:
         pass
 
     @abstractmethod
@@ -261,7 +265,7 @@ class Number(Command):
         super().__init__(line, column)
         self.value = Fraction(value)
 
-    def run(self, interpreter: Interpreter):
+    def run(self, interpreter: Interpreter) -> None:
         interpreter.push(self.value)
 
     def render(self) -> str:
@@ -275,7 +279,7 @@ class Word(Command):
         super().__init__(line, column)
         self.word = word
 
-    def run(self, interpreter: Interpreter):
+    def run(self, interpreter: Interpreter) -> None:
         if interpreter.debug_mode >= DebugMode.WORD_STEP:
             input(f"Word `{self.word}` at {interpreter.file}:{self.line}:{self.column}")
             interpreter.dump()
@@ -289,11 +293,11 @@ class Word(Command):
             case "/":
                 interpreter.push(interpreter.pop() / interpreter.pop())
             case "//":
-                interpreter.push(interpreter.pop() // interpreter.pop())
+                interpreter.push(Fraction(interpreter.pop() // interpreter.pop()))
             case "%":
                 interpreter.push(interpreter.pop() % interpreter.pop())
             case "call":
-                interpreter.call(interpreter.pop(), self.line, self.column)
+                interpreter.call(int(interpreter.pop()), self.line, self.column)
             case "swap":
                 value1 = interpreter.pop()
                 value2 = interpreter.pop()
