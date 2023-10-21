@@ -315,6 +315,8 @@ class Word(Command):
             # Implementation Specific Instructions
             case "debug":
                 interpreter.set_debug(int(interpreter.pop()))
+            case "dump":
+                interpreter.dump()
             case word:
                 interpreter.error(f"Unkown Word: `{word}`", self.line, self.column)
 
