@@ -67,9 +67,11 @@ class Parser:
         column = self.column
         while True:
             c = self.get_char()
-            if c == "": break
+            if c == "":
+                break
             if c in string.whitespace:
-                if len(token) == 0: continue
+                if len(token) == 0:
+                    continue
                 break
             token.append(c)
 
@@ -116,12 +118,16 @@ class Parser:
             commands = []
             while (command_tok := self.get_token()).tok != "end":
                 if command_tok.tok == "":
-                    self.interpreter.error("Input ended Unexpectedly", self.line, self.column)
+                    self.interpreter.error(
+                        "Input ended Unexpectedly", self.line, self.column
+                    )
                 try:
                     value = Fraction(command_tok.tok)
                     commands.append(Number(value, command_tok.line, command_tok.column))
                 except ValueError:
-                    commands.append(Word(command_tok.tok, command_tok.line, command_tok.column))
+                    commands.append(
+                        Word(command_tok.tok, command_tok.line, command_tok.column)
+                    )
 
             functions[function_index] = Function(commands)
 
@@ -137,9 +143,9 @@ class Interpreter:
     debug_mode: DebugMode
 
     def __init__(
-            self,
-            file: str,
-            debug_mode: DebugMode = DebugMode.NO_DEBUG,
+        self,
+        file: str,
+        debug_mode: DebugMode = DebugMode.NO_DEBUG,
     ):
         self.file = file
         self.current_stack = []
@@ -202,11 +208,19 @@ class Interpreter:
         for row in range(max_stack_size, 0, -1):
             print(
                 " | ".join(
-                    f"{("" if len(stack) - 1 < row else str(stack[row])).center(10)}" for _, stack in sorted(self.stacks.items(), key=lambda i: i[0],)
+                    f"{(" " if len(stack) - 1 < row else str(stack[row])).center(10)}"
+                    for _, stack in sorted(
+                        self.stacks.items(),
+                        key=lambda i: i[0],
+                    )
                 )
             )
-        print("-"*(13*len(self.stacks.keys()) - 3))
-        print(" | ".join(f"{str(stack).center(10)}" for stack in sorted(self.stacks.keys())))
+        print("-" * (13 * len(self.stacks.keys()) - 3))
+        print(
+            " | ".join(
+                f"{str(stack).center(10)}" for stack in sorted(self.stacks.keys())
+            )
+        )
 
 
 class Function:
@@ -323,6 +337,6 @@ class Word(Command):
         return self.word
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     inp = Interpreter(sys.argv[1])
     inp.run()
