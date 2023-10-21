@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import string
+import sys
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from enum import IntEnum
@@ -323,6 +324,5 @@ class Word(Command):
 
 
 if __name__ == '__main__':
-    inp = Interpreter("test.sc")
+    inp = Interpreter(sys.argv[1])
     inp.run()
-    inp.dump()
