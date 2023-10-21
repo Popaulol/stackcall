@@ -41,6 +41,10 @@ def 0
 
 10 putchar
 
+2 1 / change 2 1 / 2 1 / out
+
+10 putchar
+
 72 putchar
 101 putchar
 108 putchar
@@ -52,7 +56,13 @@ def 0
 114 putchar
 108 putchar
 100 putchar
+
+10 putchar
+
+1 2 - out
+
 end
+
 
 # Commentaha asdasdasd
 
