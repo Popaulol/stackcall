@@ -190,6 +190,7 @@ class Interpreter:
 
     def change_stack(self, i: int):
         self.current_stack = self.stacks.get(i, list())
+        self.stacks[i] = self.current_stack
 
     def set_debug(self, mode: int):
         self.debug_mode = DebugMode(mode)
