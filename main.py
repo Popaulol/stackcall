@@ -51,6 +51,7 @@ class Parser:
         self.column += 1
         if c == "\n":
             self.line += 1
+            self.column = 0
 
         if c == "#":
             while self.get_char() not in ["\n", ""]:
@@ -65,7 +66,8 @@ class Parser:
         column = self.column
         while True:
             c = self.get_char()
-            if c in string.whitespace or c == "":
+            if c == "": break
+            if c in string.whitespace:
                 if len(token) == 0: continue
                 break
             token.append(c)
