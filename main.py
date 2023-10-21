@@ -308,11 +308,9 @@ class Word(Command):
             case "in":
                 interpreter.push(Fraction(input()))
             case "out":
-                print(float(interpreter.pop()), end="")
+                print(str(interpreter.pop()), end="")
             case "change":
                 interpreter.change_stack(interpreter.pop())
-
-            # Implementation Specific Instructions
             case "debug":
                 interpreter.set_debug(int(interpreter.pop()))
             case "dump":
