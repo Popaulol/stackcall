@@ -196,14 +196,16 @@ class Interpreter:
         self.debug_mode = DebugMode(mode)
 
     def dump(self):
+        print()
         max_stack_size = max(len(stack) for _, stack in self.stacks.items())
         for row in range(max_stack_size, 0, -1):
             print(
                 " | ".join(
-                    f"{("" if len(stack) - 1 < row else str(stack[row])).center(10)}" for stack in self.stacks.values()
+                    f"{("" if len(stack) - 1 < row else str(stack[row])).center(10)}" for _, stack in sorted(self.stacks.items(), key=lambda i: i[0],)
                 )
             )
-        print(" | ".join(f"{str(stack).center(10)}" for stack in self.stacks.keys()))
+        print("-"*(13*len(self.stacks.keys()) - 3))
+        print(" | ".join(f"{str(stack).center(10)}" for stack in sorted(self.stacks.keys())))
 
 
 class Function:
