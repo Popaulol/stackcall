@@ -63,8 +63,13 @@ def 0
 1 2 - out
 
 10 putchar
+stack out
+
+10 putchar
 
 2 call
+
+10 50 99 move 99 move 99 change putchar putchar
 
 end
 
