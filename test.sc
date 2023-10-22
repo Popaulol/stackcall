@@ -62,6 +62,10 @@ def 0
 
 1 2 - out
 
+10 putchar
+
+2 call
+
 end
 
 
@@ -79,4 +83,38 @@ oh wait it is actually 3 lines
 def 1
     +
 end
-#
+
+def 2
+    3 3 call
+end
+
+def 3
+    1 + dup call
+    rerun
+end
+
+def 4
+    33 putchar
+end
+def 5
+    34 putchar
+end
+def 6
+    35 putchar
+end
+def 7
+    36 putchar
+end
+def 8
+    37 putchar
+end
+def 9
+    38 putchar
+end
+
+def 10
+    2 nret
+end
+
+
+
