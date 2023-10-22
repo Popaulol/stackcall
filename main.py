@@ -145,7 +145,7 @@ class Nret(StackcallFlowException):
     def __init__(self, n: int):
         self.n = n
 
-    def reduce(self):
+    def reduce(self) -> None:
         self.n -= 1
 
 
@@ -358,7 +358,7 @@ class Word(Command):
             case "out":
                 print(str(interpreter.pop()), end="")
             case "nret":
-                raise Nret(interpreter.pop())
+                raise Nret(int(interpreter.pop()))
             case "rerun":
                 raise DoRerun()
             case "change":
