@@ -371,6 +371,13 @@ class Word(Command):
                 interpreter.dump()
             case "stack":
                 interpreter.push(interpreter.current_stack_idx)
+            case "move":
+                stack = interpreter.pop()
+                value = interpreter.pop()
+                current_stack = interpreter.current_stack_idx
+                interpreter.change_stack(stack)
+                interpreter.push(value)
+                interpreter.change_stack(current_stack)
             case word:
                 interpreter.error(f"Unkown Word: `{word}`", self.line, self.column)
 
