@@ -328,6 +328,7 @@ class Word(Command):
                 except Nret as nret:
                     if nret.n != 1:
                         nret.reduce()
+                        interpreter.call_stack.pop()
                         raise nret
 
             case "swap":
