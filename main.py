@@ -135,6 +135,24 @@ class Parser:
         return functions
 
 
+class StackcallFlowException(Exception):
+    pass
+
+
+class Nret(StackcallFlowException):
+    n: int
+
+    def __init__(self, n: int):
+        self.n = n
+
+    def reduce(self):
+        self.n -= 1
+
+
+class DoRerun(StackcallFlowException):
+    pass
+
+
 class Interpreter:
     current_stack: list[stack_value]
     stacks: dict[stack_value, list[stack_value]]
@@ -144,9 +162,9 @@ class Interpreter:
     debug_mode: DebugMode
 
     def __init__(
-        self,
-        file: str,
-        debug_mode: DebugMode = DebugMode.NO_DEBUG,
+            self,
+            file: str,
+            debug_mode: DebugMode = DebugMode.NO_DEBUG,
     ):
         self.file = file
         self.current_stack = []
@@ -234,8 +252,13 @@ class Function:
         self.commands = commands
 
     def run(self, interpreter: Interpreter) -> None:
-        for command in self.commands:
-            command.run(interpreter)
+        while True:
+            try:
+                for command in self.commands:
+                    command.run(interpreter)
+            except DoRerun:
+                continue
+            break
 
     def render(self) -> str:
         return "\n\t".join(command.render() for command in self.commands)
@@ -297,7 +320,13 @@ class Word(Command):
             case "%":
                 interpreter.push(interpreter.pop() % interpreter.pop())
             case "call":
-                interpreter.call(int(interpreter.pop()), self.line, self.column)
+                try:
+                    interpreter.call(int(interpreter.pop()), self.line, self.column)
+                except Nret as nret:
+                    if nret.n != 1:
+                        nret.reduce()
+                        raise nret
+
             case "swap":
                 value1 = interpreter.pop()
                 value2 = interpreter.pop()
@@ -328,6 +357,10 @@ class Word(Command):
                 interpreter.push(Fraction(input()))
             case "out":
                 print(str(interpreter.pop()), end="")
+            case "nret":
+                raise Nret(interpreter.pop())
+            case "rerun":
+                raise DoRerun()
             case "change":
                 interpreter.change_stack(interpreter.pop())
             case "debug":
