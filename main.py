@@ -162,9 +162,9 @@ class Interpreter:
     debug_mode: DebugMode
 
     def __init__(
-            self,
-            file: str,
-            debug_mode: DebugMode = DebugMode.NO_DEBUG,
+        self,
+        file: str,
+        debug_mode: DebugMode = DebugMode.NO_DEBUG,
     ):
         self.file = file
         self.current_stack = []
