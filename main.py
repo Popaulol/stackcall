@@ -156,6 +156,7 @@ class DoRerun(StackcallFlowException):
 class Interpreter:
     current_stack: list[stack_value]
     stacks: dict[stack_value, list[stack_value]]
+    current_stack_idx: stack_value
     functions: dict[int, Function]
     file: str
     call_stack: list[int]
@@ -215,6 +216,7 @@ class Interpreter:
         self.current_stack.clear()
 
     def change_stack(self, i: stack_value) -> None:
+        self.current_stack_idx = i
         self.current_stack = self.stacks.get(i, list())
         self.stacks[i] = self.current_stack
 
@@ -367,6 +369,8 @@ class Word(Command):
                 interpreter.set_debug(int(interpreter.pop()))
             case "dump":
                 interpreter.dump()
+            case "stack":
+                interpreter.push(interpreter.current_stack_idx)
             case word:
                 interpreter.error(f"Unkown Word: `{word}`", self.line, self.column)
 

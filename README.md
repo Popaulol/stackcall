@@ -49,6 +49,7 @@ If a Word is neither of the above, the behavior is implementation defined.
 | dump        | Dumps an implementation defined representation of all of the Stacks to the User                                                                                                                      |
 | nret        | Pops a value of the stack and returns upwards the amount of Callframes the floor function returns for the popped value.                                                                              |                                                                                                                                  |
 | rerun       | Restarts execution of the current function without adding another callframe to the call stack.                                                                                                       |
+| stack       | Pushes the Index of the currently active Stack onto the currently active Stack                                                                                                                       |
 
 ## Examples
 ### Hello World
