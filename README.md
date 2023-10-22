@@ -47,6 +47,8 @@ If a Word is neither of the above, the behavior is implementation defined.
 | change      | Pops a value from the currently active Stacks and switches the currently active stack to the one with that ID                                                                                        |
 | debug       | Pops a value from the Stack and sets the current debug mode to it, 0 is no debugging and every other mode is implementation defined                                                                  |
 | dump        | Dumps an implementation defined representation of all of the Stacks to the User                                                                                                                      |
+| nret        | Pops a value of the stack and returns upwards the amount of Callframes the floor function returns for the popped value.                                                                              |                                                                                                                                  |
+| rerun       | Restarts execution of the current function without adding another callframe to the call stack.                                                                                                       |
 
 ## Examples
 ### Hello World
