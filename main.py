@@ -186,7 +186,7 @@ class Interpreter:
         if self.debug_mode >= DebugMode.CALL_STEP:
             input(f"Function {i} was called from {self.file}:{line}:{column}")
 
-        if 0 not in self.functions.keys():
+        if i not in self.functions.keys():
             self.error(f"No Function {i} exists!", line, column)
 
         self.call_stack.append(i)
