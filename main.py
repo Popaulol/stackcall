@@ -196,9 +196,6 @@ class Interpreter:
     def error(self, message: str, line: int, column: int) -> NoReturn:
         print(f"{self.file}:{line}:{column}: {message}")
 
-        for i in self.call_stack:
-            print(f"at {i}")
-
         self.dump()
         breakpoint()
         exit()
@@ -228,6 +225,10 @@ class Interpreter:
             return value[0]
 
         print()
+        print("Current Callstack: ")
+        for i in reversed(self.call_stack):
+            print(f"\t {i}")
+
         max_stack_size = max(len(stack) for _, stack in self.stacks.items())
         for row in range(max_stack_size, 0, -1):
             print(
